@@ -56,13 +56,62 @@ SKIP_REASON_DISABLED = (
 #: 落盘恢复场景的用户输入（提取为常量，避免断言与调用处各写一份而漂移）
 PERSIST_PROMPT = "请调用 todo 工具记录待办「落盘验证项」。"
 
+#: 端点可达性预检的 TCP 超时（秒）。选短值：这只是"服务是否在线"的快速判定。
+PREFLIGHT_TIMEOUT_SECONDS = 8.0
+
+#: 预检结果缓存：``None`` 表示尚未检查
+_endpoint_status = None
+
+
+def _endpoint_problem() -> str:
+    """检查 LLM 端点是否可达；不可达时返回原因，可达时返回空串。
+
+    为什么要做这层预检：E2E 依赖的**外部服务可能随时下线或限流**。
+    若不做预检，供应商挂掉时这 10 个用例会报成"失败"，
+    容易被误读成被测代码有缺陷。真实情况是"测试根本没跑成"，
+    因此应当 skip 并把原因说清楚，而不是 fail。
+
+    只做 TCP 层探测（不发送任何计费请求），结果缓存复用。
+    """
+    global _endpoint_status
+    if _endpoint_status is not None:
+        return _endpoint_status
+
+    from urllib.parse import urlparse
+    import socket
+
+    base_url = os.environ.get("LLM_BASE_URL", "").strip() or "https://api.openai.com/v1"
+    parsed = urlparse(base_url)
+    host = parsed.hostname
+    port = parsed.port or (443 if parsed.scheme == "https" else 80)
+    if not host:
+        _endpoint_status = f"无法从 LLM_BASE_URL 解析出主机名：{base_url!r}"
+        return _endpoint_status
+
+    try:
+        with socket.create_connection((host, port), timeout=PREFLIGHT_TIMEOUT_SECONDS):
+            _endpoint_status = ""
+    except OSError as exc:
+        _endpoint_status = (
+            f"LLM 端点 {host}:{port} 当前不可达（{type(exc).__name__}: {exc}）。"
+            "这是外部服务的可用性问题，不是被测代码的缺陷，因此跳过 E2E。"
+            "端点恢复后重新运行即可。"
+        )
+    return _endpoint_status
+
 
 def e2e_enabled() -> tuple:
-    """返回 ``(是否启用, 跳过原因)``。"""
+    """返回 ``(是否启用, 跳过原因)``。
+
+    三重闸门：密钥 → 显式开关 → 端点可达性。
+    """
     if not os.environ.get("LLM_API_KEY", "").strip():
         return False, SKIP_REASON_NO_KEY
     if os.environ.get("LLM_E2E", "").strip().lower() not in TRUE_VALUES:
         return False, SKIP_REASON_DISABLED
+    problem = _endpoint_problem()
+    if problem:
+        return False, problem
     return True, ""
 
 

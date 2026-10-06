@@ -1,7 +1,7 @@
 # 对照 spec.md 第 6 节验收清单的逐条核验（T050）
 
 > 核验方式：每条给出**结论 + 可复核证据**（测试方法名 / 文件 / 命令）。
-> 测试命令：`python -m unittest discover -s tests -t . -v`（离线，378 用例）
+> 测试命令：`python -m unittest discover -s tests -t . -v`（离线，385 用例）
 > 真实 API 命令：另需 `LLM_E2E=1` 与密钥环境变量（10 用例）
 > 结论取值：✅ 通过 / ⚠️ 通过但需说明边界 / ❌ 不通过
 
@@ -17,7 +17,7 @@
 | N4 | 链式/多工具调用可用，最终答案综合各工具结果 | ✅ | `test_loop.py::TestToolCallPath::test_chained_tool_calls_across_iterations`、`test_multiple_tool_calls_in_one_response`；真实 API：`TestRealLLMChainedAndSessions::test_todo_add_then_list_chains_tools` |
 | N5 | ≥3 个工具，具备 name/description/参数 Schema 注册机制，新增工具无需改主循环 | ✅ | `agent/tools/calculator.py`、`search.py`、`todo.py`；`test_tool_registry.py::test_default_registry_exposes_three_tools`、`test_new_tool_needs_no_core_change`（注册 EchoTool 后自动出现在 LLM 工具列表） |
 | N6 | 解析逻辑可稳定提取思考过程、工具调用、最终答案 | ✅ | `test_parser.py::TestProtocolSelectionPriority`（三级优先级）、`TestNativeToolCalls`、`TestProtocolJsonInText`、`TestFallbackPaths`（共 43 用例） |
-| N7 | 已接入真实 LLM API，端到端 E2E 在配置密钥后可跑通 | ✅ | `agent/llm.py::urllib_transport` 为默认真实传输；**实测**：`LLM_API_KEY`+`LLM_E2E=1` 下 `Ran 378 tests … OK`；CLI 真实跑通「search+todo」双工具调用 |
+| N7 | 已接入真实 LLM API，端到端 E2E 在配置密钥后可跑通 | ✅ | `agent/llm.py::urllib_transport` 为默认真实传输；**实测**：`LLM_API_KEY`+`LLM_E2E=1` 下 `Ran 385 tests … OK`；CLI 真实跑通「search+todo」双工具调用 |
 | N8 | 双窗口 session 场景通过，互不影响且可随时续聊并恢复历史 | ✅ | 离线：`test_session_context_integration.py::test_full_dual_window_flow`、`test_resume_window_1_after_working_in_window_2`、`test_loop.py::test_dual_window_isolation_through_loop`；**真实 API 跨进程实测**：窗口1 待办仅「带伞」、窗口2 仅「写周报」 |
 | N9 | 纯对话追问与带工具追问均正确工作 | ✅ | `test_context.py::TestFollowUpSupport::test_plain_conversational_follow_up_sees_prior_turns`、`test_tool_follow_up_sees_prior_tool_result`；真实 API：`test_tool_result_visible_in_next_turn_follow_up`（(20+22)×2=84） |
 | N10 | 最大轮次限制与基础压缩均生效且可配置 | ✅ | 轮次：`test_loop_errors.py::TestMaxIterations::test_limit_stops_endless_tool_calls`；压缩：`test_context.py::TestCompression::test_compression_triggered_when_over_limit`、`test_result_stays_within_limit`；均可配置（`LoopPolicy` / `ContextPolicy`，CLI 暴露 `--max-iterations`、`--max-context-chars`） |
@@ -54,7 +54,7 @@
 
 | 编号 | 验收项 | 结论 | 证据 |
 | --- | --- | --- | --- |
-| D1 | 测试覆盖第 5 节功能点并全部通过；测试可离线运行 | ✅ | 离线 `Ran 378 tests … OK`；覆盖矩阵见 README 第 5 节；真实 API 用例默认跳过（`skipped=10`） |
+| D1 | 测试覆盖第 5 节功能点并全部通过；测试可离线运行 | ✅ | 离线 `Ran 385 tests … OK`；覆盖矩阵见 README 第 5 节；真实 API 用例默认跳过（`skipped=10`） |
 | D2 | 仓库无硬编码密钥、无真实 API Key，附 `.env.example` | ✅ | 特征串全文扫描零命中；`.env.example` 仅占位；`.gitignore` 排除 `.env`；`safe_summary()` 打码 |
 | D3 | 按 README 步骤在干净环境可复现运行与跑测 | ✅ | 零第三方依赖，无需 `pip install`；`python -m agent --check-config`、`python -m unittest discover -s tests -t .` 均按 README 原样可执行 |
 | D4 | 提交 GitHub 链接且可访问 | ✅ | <https://github.com/ckj337728-web/agent>，匿名访问 `HTTP 200`；远端 43 个文件与本地完全一致 |
@@ -91,7 +91,7 @@
 
 ```bash
 python -m compileall -q agent tests
-python -m unittest discover -s tests -t .            # 378 passed, 10 skipped
+python -m unittest discover -s tests -t .            # 385 passed, 10 skipped
 # 密钥泄漏扫描：把 <密钥特征串> / <端点域名> 换成你实际使用的值
 grep -rn "<密钥特征串>\|<端点域名>" . --exclude-dir=.git --exclude-dir=__pycache__   # 应无命中
 ```

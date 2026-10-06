@@ -6,7 +6,7 @@ session 管理与 context 压缩全部自行实现，**未使用任何 Agent 框
 
 - 仓库地址：<https://github.com/ckj337728-web/agent>
 - 代码行数：源码约 3600 行，测试约 4200 行
-- 测试：**378 个用例**，离线全绿；另有 10 个真实 API 端到端用例
+- 测试：**385 个用例**，离线全绿；另有 10 个真实 API 端到端用例
 - 依赖：**零第三方依赖**，仅使用 Python 标准库
 
 ---
@@ -99,7 +99,7 @@ python -m unittest tests.test_loop tests.test_parser -v
 
 ```bash
 $env:LLM_API_KEY="<密钥>"; $env:LLM_E2E="1"     # PowerShell
-python -m unittest discover -s tests -t .        # 378 passed（含 10 个真实网络用例）
+python -m unittest discover -s tests -t .        # 385 passed（含 10 个真实网络用例）
 ```
 
 未设置 `LLM_API_KEY` 或未设置 `LLM_E2E=1` 时，这 10 个用例自动跳过，
@@ -382,7 +382,7 @@ agent-vibe_coding-test/
 
 ## 5. 测试覆盖
 
-`python -m unittest discover -s tests -t . -v` → **378 个用例全绿**（离线，无需密钥）。
+`python -m unittest discover -s tests -t . -v` → **385 个用例全绿**（离线，无需密钥）。
 
 | 测试文件 | 用例数 | 覆盖内容 |
 | --- | --- | --- |
@@ -397,7 +397,7 @@ agent-vibe_coding-test/
 | `test_context.py` | 41 | 组装顺序、状态置顶、两类追问、压缩与摘要硬上限、截断 |
 | `test_session_context_integration.py` | 9 | Session × Context × 工具三方联动、双窗口全流程 |
 | `test_loop.py` | 27 | 四步骤、直接回复、工具调用、链式调用、多工具、trace 与事件 |
-| `test_loop_errors.py` | 38 | LLM/工具失败、轮次上限、无进展、解析重试、空输入、配置与 session 异常 |
+| `test_loop_errors.py` | 45 | LLM/工具失败、轮次上限、无进展、解析重试、空输入、配置与 session 异常、CLI 参数校验 |
 | `test_e2e_real_llm.py` | 10 | 真实 API 端到端（默认跳过，需 `LLM_E2E=1`） |
 
 测试可离线确定性运行：LLM 层被替换为可注入的 `FakeTransport`（伪造 HTTP 报文）

@@ -55,7 +55,7 @@ grep -rn "<密钥特征串>\|<端点域名>" . --exclude-dir=.git --exclude-dir=
 | 约束 | 结论 | 证据 |
 | --- | --- | --- |
 | 干净环境按 README 可复现运行，依赖清单完整、无隐式本机依赖 | ✅ | 零第三方依赖，无需 `pip install`；`python -m agent --check-config` 可直接运行 |
-| 自动化测试须能**离线**运行，不依赖真实网络与密钥 | ✅ | `python -m unittest discover -s tests -t .` → **378 passed**（无网络、无密钥）；LLM 层被 `FakeTransport` / `ScriptedLLM` 替换 |
+| 自动化测试须能**离线**运行，不依赖真实网络与密钥 | ✅ | `python -m unittest discover -s tests -t .` → **385 passed**（无网络、无密钥）；LLM 层被 `FakeTransport` / `ScriptedLLM` 替换 |
 | 真实 API 通路作为**可选** E2E | ✅ | `tests/test_e2e_real_llm.py` 需 `LLM_API_KEY` **且** `LLM_E2E=1` 才运行；缺任一条件自动跳过 |
 | 配置缺失时给出明确报错，而非静默失败或堆栈外泄 | ✅ | `ConfigError` 携带可直接照抄的设置示例；CLI 捕获后打印提示并退出码 2；`test_loop_errors.py::TestMissingConfig` 断言输出中无 `Traceback` |
 | 支持多 session 并发使用而不互相污染 | ✅ | `test_session.py`、`test_session_context_integration.py`、`test_loop.py::TestLoopWithRealRegistry::test_dual_window_isolation_through_loop`；真实 API 下跨进程实测窗口1/窗口2 待办互不影响 |
@@ -97,7 +97,7 @@ grep -rn "<密钥特征串>\|<端点域名>" . --exclude-dir=.git --exclude-dir=
 # 编译检查
 python -m compileall -q agent tests
 
-# 离线全量测试（应 378 passed，10 skipped）
+# 离线全量测试（应 385 passed，10 skipped）
 python -m unittest discover -s tests -t . 2>&1 | tail -3
 
 # 真实 API 端到端（需密钥）

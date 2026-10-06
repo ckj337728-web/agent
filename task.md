@@ -7,8 +7,8 @@
 > **当前进度：全部 8 个阶段完成（T001–T051）**。所有任务均已完成并验证。
 >
 > 验证结果：
-> - 离线（无密钥，默认）：`python -m unittest discover -s tests -t .` → **378 tests, OK (skipped=10)**
-> - 真实 API（`LLM_API_KEY` + `LLM_E2E=1`）：同命令 → **378 tests, OK**（含 10 个真实网络用例）
+> - 离线（无密钥，默认）：`python -m unittest discover -s tests -t .` → **385 tests, OK (skipped=10)**
+> - 真实 API（`LLM_API_KEY` + `LLM_E2E=1`）：同命令 → **385 tests, OK**（含 10 个真实网络用例）
 > - CLI 真实通路：`python -m agent --session window-1 --prompt "…"` 跑通「search + todo」双工具调用，退出码 0
 > - 双窗口隔离（真实 API，跨进程 + 落盘）：窗口1 待办仅「带伞」，窗口2 仅「写周报」，互不影响
 > - 约束自检：`docs/requirements-check.md` 全部通过；验收核验：`docs/acceptance.md` **33/33 通过**
@@ -222,8 +222,8 @@
   - 完成判定：有密钥环境下通过；无密钥环境下自动跳过且不导致测试套件失败（spec 4.3）
   - 完成情况：`tests/test_e2e_real_llm.py`（10 个用例，4 个测试类）。**双重闸门**：需 `LLM_API_KEY` 已设置且 `LLM_E2E=1` 才运行，避免误触发计费调用；缺任一条件即自动 `skipTest` 并说明原因。覆盖：直接回复与答案落库、`llm_call` 进 trace、calculator 原生 tool_calls + 结果回灌、工具 Schema 注入生效、非法参数不崩溃、todo「add→list」链式调用、带工具的追问（(20+22)×2=84）、双窗口待办隔离、落盘后重载
   - **已用真实 API 实测通过**（OpenAI 兼容端点；供应商、端点与模型名按环境变量注入，出于安全考虑不写入仓库）：
-    - 有密钥 + `LLM_E2E=1`：`Ran 378 tests … OK`（含 10 个真实网络用例）
-    - 无密钥（离线默认）：`Ran 378 tests … OK (skipped=10)`，套件不失败
+    - 有密钥 + `LLM_E2E=1`：`Ran 385 tests … OK`（含 10 个真实网络用例）
+    - 无密钥（离线默认）：`Ran 385 tests … OK (skipped=10)`，套件不失败
   - 稳健性设计：真实模型是否调用工具具有不确定性，故断言只针对**客观事实**（会话里是否真的记录了工具调用、工具结果是否进入下一轮、会话状态是否隔离）；模型本次未用工具时记为 `skipTest` 而非失败，但一旦用到工具就对运行时行为做严格断言
   - **安全**：密钥仅经环境变量注入，仓库内不含真实密钥、供应商地址与真实模型名（已用特征串全文扫描确认，spec C-7 / C-8）
 

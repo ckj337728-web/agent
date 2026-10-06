@@ -476,6 +476,78 @@ class TestMissingConfig(unittest.TestCase):
         self.assertNotIn("Traceback", captured.getvalue())
 
 
+class TestCLIArgumentValidation(unittest.TestCase):
+    """spec 6.2 E7：CLI 参数非法时必须给出明确提示，而非异常堆栈外泄。
+
+    回归背景：`--max-iterations 0` 曾触发 `LoopPolicy` 抛出的裸 `ValueError`
+    堆栈（`_make_loop` 当时只捕获 SessionError），违反"不擅自外泄堆栈"的要求。
+    """
+
+    ENV = {"LLM_API_KEY": "sk-fake-for-cli-validation"}
+
+    def _run_main(self, argv):
+        """在受控环境变量下调用 CLI 入口，返回 (退出码, stdout+stderr)。"""
+        import contextlib
+        from unittest import mock
+        from agent.__main__ import main
+
+        out, err = io.StringIO(), io.StringIO()
+        env = {k: v for k, v in os.environ.items() if not k.startswith("LLM_")}
+        env.update(self.ENV)
+        with mock.patch.dict(os.environ, env, clear=True):
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                try:
+                    code = main(argv)
+                except SystemExit as exc:  # argparse 拒绝时以 SystemExit 退出
+                    code = int(exc.code) if exc.code is not None else 0
+        return code, out.getvalue() + err.getvalue()
+
+    def test_zero_max_iterations_is_rejected_cleanly(self):
+        code, output = self._run_main(["--max-iterations", "0", "--prompt", "hi"])
+        self.assertNotEqual(code, 0, "非法参数不应被静默接受")
+        self.assertNotIn("Traceback", output, "不应外泄堆栈")
+        self.assertIn("正整数", output)
+
+    def test_negative_max_iterations_is_rejected(self):
+        code, output = self._run_main(["--max-iterations", "-3", "--prompt", "hi"])
+        self.assertNotEqual(code, 0)
+        self.assertNotIn("Traceback", output)
+
+    def test_non_numeric_max_iterations_is_rejected(self):
+        code, output = self._run_main(["--max-iterations", "abc", "--prompt", "hi"])
+        self.assertNotEqual(code, 0)
+        self.assertNotIn("Traceback", output)
+        self.assertIn("整数", output)
+
+    def test_zero_tool_timeout_is_rejected_cleanly(self):
+        code, output = self._run_main(["--tool-timeout", "0", "--prompt", "hi"])
+        self.assertNotEqual(code, 0)
+        self.assertNotIn("Traceback", output)
+        self.assertIn("正数", output)
+
+    def test_negative_tool_timeout_is_rejected(self):
+        code, output = self._run_main(["--tool-timeout", "-1", "--prompt", "hi"])
+        self.assertNotEqual(code, 0)
+        self.assertNotIn("Traceback", output)
+
+    def test_zero_max_context_chars_is_rejected_cleanly(self):
+        code, output = self._run_main(["--max-context-chars", "0", "--prompt", "hi"])
+        self.assertNotEqual(code, 0)
+        self.assertNotIn("Traceback", output)
+        self.assertIn("正整数", output)
+
+    def test_valid_arguments_still_accepted(self):
+        """边界正向：合法值必须照常通过参数校验（此处只校验到 argparse 层）。"""
+        from agent.__main__ import build_parser
+
+        args = build_parser().parse_args(
+            ["--max-iterations", "1", "--tool-timeout", "0.5", "--max-context-chars", "1"]
+        )
+        self.assertEqual(args.max_iterations, 1)
+        self.assertEqual(args.tool_timeout, 0.5)
+        self.assertEqual(args.max_context_chars, 1)
+
+
 class TestMultiSessionThroughLoop(unittest.TestCase):
     """spec 6.3 B7：两 session 交替使用，始终隔离。"""
 

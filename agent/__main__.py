@@ -64,21 +64,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--max-iterations",
-        type=int,
+        type=_positive_int,
         default=LoopPolicy.max_iterations,
-        help=f"单轮最大循环次数（默认 {LoopPolicy.max_iterations}）",
+        help=f"单轮最大循环次数，需为正整数（默认 {LoopPolicy.max_iterations}）",
     )
     parser.add_argument(
         "--tool-timeout",
-        type=float,
+        type=_positive_float,
         default=LoopPolicy.tool_timeout_seconds,
-        help=f"单次工具执行超时秒数（默认 {LoopPolicy.tool_timeout_seconds}）",
+        help=f"单次工具执行超时秒数，需为正数（默认 {LoopPolicy.tool_timeout_seconds}）",
     )
     parser.add_argument(
         "--max-context-chars",
-        type=int,
+        type=_positive_int,
         default=ContextPolicy.max_context_chars,
-        help=f"context 字符上限，超出触发压缩（默认 {ContextPolicy.max_context_chars}）",
+        help=f"context 字符上限，超出触发压缩，需为正整数（默认 {ContextPolicy.max_context_chars}）",
     )
     parser.add_argument(
         "--trace",
@@ -92,6 +92,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="列出存储中的 session 后退出",
     )
     return parser
+
+
+def _positive_int(value: str) -> int:
+    """argparse 类型校验：必须为正整数（如 --max-iterations）。"""
+    try:
+        number = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"必须是整数，收到 {value!r}") from None
+    if number < 1:
+        raise argparse.ArgumentTypeError(f"必须为正整数（≥1），收到 {number}")
+    return number
+
+
+def _positive_float(value: str) -> float:
+    """argparse 类型校验：必须为正数（如 --tool-timeout）。"""
+    try:
+        number = float(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"必须是数字，收到 {value!r}") from None
+    if number <= 0:
+        raise argparse.ArgumentTypeError(f"必须为正数（>0），收到 {number}")
+    return number
 
 
 def _print_event(event: str, payload: Dict[str, Any]) -> None:
@@ -174,6 +196,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     except SessionError as exc:
         print(f"[session 错误] {exc}", file=sys.stderr)
         return 3
+    except ValueError as exc:
+        # 策略参数非法（如 --max-iterations 0）。
+        # spec 6.2 E7 要求"给出明确提示，而非静默失败或异常堆栈外泄"，
+        # 因此这里必须捕获并转成可读提示，不能让它冒泡成裸堆栈。
+        print(f"[参数错误] {exc}", file=sys.stderr)
+        print("用 `python -m agent --help` 查看各参数取值要求。", file=sys.stderr)
+        return 2
 
     session_id = args.session or SessionStore.new_session_id()
     print(f"agent {__version__} | session={session_id}", file=sys.stderr)
