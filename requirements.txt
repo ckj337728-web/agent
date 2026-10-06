@@ -1,0 +1,10 @@
+# 依赖清单
+#
+# 本项目为「零第三方依赖」实现：仅使用 Python 3.10+ 标准库
+# （urllib.request / json / logging / dataclasses / unittest 等）。
+#
+# 因此本文件无需列出任何需要安装的包，`pip install -r requirements.txt` 是安全的空操作。
+# 这样做是为了满足 spec 4.3「干净环境按 README 步骤可复现运行」与
+# spec 4.2「仓库不得硬编码密钥、提交物不得含 API Key」。
+#
+# 密钥请通过环境变量注入，参考 .env.example。
