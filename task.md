@@ -13,7 +13,7 @@
 > - 双窗口隔离（真实 API，跨进程 + 落盘）：窗口1 待办仅「带伞」，窗口2 仅「写周报」，互不影响
 > - 约束自检：`docs/requirements-check.md` 全部通过；验收核验：`docs/acceptance.md` **33/33 通过**
 >
-> 仓库状态：已推送至 <https://github.com/ckj337728-web/agent>（`main` 分支），
+> 仓库状态：已推送至 <https://github.com/ckj337728-web/agent-vibe_coding-test>（`main` 分支），
 > 远端 43 个文件与本地完全一致；远端视角密钥扫描零命中。
 
 ## 阶段 0：现有资产探查（先行，避免重复造轮子）
@@ -258,7 +258,7 @@
 - [×] T051 提交 GitHub 仓库链接并确认仓库内无 API Key
   - 产出：可访问的仓库链接
   - 完成判定：链接可访问；全仓库检索无真实密钥（spec 4.2 C-7/C-9）
-  - 完成情况：**已推送至 <https://github.com/ckj337728-web/agent>**（`main` 分支，已建立 upstream 跟踪）。验证：
+  - 完成情况：**已推送至 <https://github.com/ckj337728-web/agent-vibe_coding-test>**（`main` 分支，已建立 upstream 跟踪）。验证：
     - 远端 43 个文件与本地 `origin/main` **完全一致**（`git diff` 为空），工作区 clean
     - 匿名访问验证：仓库页与 `raw.githubusercontent.com` 上的 README 均返回 **HTTP 200**
     - **远端视角密钥扫描**：从 GitHub 逐个拉取全部 43 个文件内容扫描，真实密钥 / 供应商域名与名称 / 真实模型名 / 长密钥样式串**零命中**

@@ -37,7 +37,7 @@ grep -rniE "langgraph|openhands|openclaw|langchain|autogen|llama_index" --includ
 | --- | --- | --- | --- |
 | C-7 | **不要提供 API Key**，提交物不得含真实密钥 | ✅ | 全文特征串扫描（真实密钥片段、供应商域名、真实模型名）**零命中**；密钥仅经环境变量注入；`.env` 已被 `.gitignore` 排除且仓库内不存在 |
 | C-8 | 仓库不得硬编码密钥，附 `.env.example` | ✅ | `.env.example` 仅含占位说明；`agent/config.py` 全部经 `os.environ` 读取；`safe_summary()` 对密钥打码只留末 4 位 |
-| C-9 | 提交形式为 GitHub 链接，附 README 与 AI Prompt/问题解决记录 | ✅ | 仓库地址 <https://github.com/ckj337728-web/agent>（已验证匿名 HTTP 200 可访问）；README 完整；AI 记录见 [`notes/ai-usage.md`](../notes/ai-usage.md) |
+| C-9 | 提交形式为 GitHub 链接，附 README 与 AI Prompt/问题解决记录 | ✅ | 仓库地址 <https://github.com/ckj337728-web/agent-vibe_coding-test>（已验证匿名 HTTP 200 可访问）；README 完整；AI 记录见 [`notes/ai-usage.md`](../notes/ai-usage.md) |
 | C-10 | README 必须覆盖运行方式、系统设计、memory 召回时机与放置方式 | ✅ | README 第 1 节（运行方式）、第 2 节（系统设计）、第 3 节（memory） |
 
 **C-7 复核命令**：
@@ -85,7 +85,7 @@ grep -rn "<密钥特征串>\|<端点域名>" . --exclude-dir=.git --exclude-dir=
 
 已完成（提交者操作 + 复核）：
 
-- 仓库已推送至 <https://github.com/ckj337728-web/agent>，
+- 仓库已推送至 <https://github.com/ckj337728-web/agent-vibe_coding-test>，
   匿名访问验证 `HTTP 200`；远端 43 个文件逐个拉取扫描，无密钥泄漏。
 - 远端与本地 `origin/main` 内容完全一致，工作区 clean。
 

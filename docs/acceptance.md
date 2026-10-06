@@ -57,7 +57,7 @@
 | D1 | 测试覆盖第 5 节功能点并全部通过；测试可离线运行 | ✅ | 离线 `Ran 385 tests … OK`；覆盖矩阵见 README 第 5 节；真实 API 用例默认跳过（`skipped=10`） |
 | D2 | 仓库无硬编码密钥、无真实 API Key，附 `.env.example` | ✅ | 特征串全文扫描零命中；`.env.example` 仅占位；`.gitignore` 排除 `.env`；`safe_summary()` 打码 |
 | D3 | 按 README 步骤在干净环境可复现运行与跑测 | ✅ | 零第三方依赖，无需 `pip install`；`python -m agent --check-config`、`python -m unittest discover -s tests -t .` 均按 README 原样可执行 |
-| D4 | 提交 GitHub 链接且可访问 | ✅ | <https://github.com/ckj337728-web/agent>，匿名访问 `HTTP 200`；远端 43 个文件与本地完全一致 |
+| D4 | 提交 GitHub 链接且可访问 | ✅ | <https://github.com/ckj337728-web/agent-vibe_coding-test>，匿名访问 `HTTP 200`；远端 43 个文件与本地完全一致 |
 | D5 | 对照第 4 节约束逐条自检无违反 | ✅ | 见 [`docs/requirements-check.md`](requirements-check.md)，C-1 ~ C-10 全部通过，无未处理项 |
 
 ---
@@ -79,7 +79,7 @@
 
 | 项 | 结果 |
 | --- | --- |
-| 仓库地址 | <https://github.com/ckj337728-web/agent> |
+| 仓库地址 | <https://github.com/ckj337728-web/agent-vibe_coding-test> |
 | 分支 | `main`，已建立 upstream 跟踪 |
 | 提交数 | 3（初始实现 → 文档脱敏 → task.md 完成标记） |
 | 远端文件数 | 43 |
