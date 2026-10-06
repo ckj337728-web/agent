@@ -57,7 +57,7 @@
 | D1 | 测试覆盖第 5 节功能点并全部通过；测试可离线运行 | ✅ | 离线 `Ran 378 tests … OK`；覆盖矩阵见 README 第 5 节；真实 API 用例默认跳过（`skipped=10`） |
 | D2 | 仓库无硬编码密钥、无真实 API Key，附 `.env.example` | ✅ | 特征串全文扫描零命中；`.env.example` 仅占位；`.gitignore` 排除 `.env`；`safe_summary()` 打码 |
 | D3 | 按 README 步骤在干净环境可复现运行与跑测 | ✅ | 零第三方依赖，无需 `pip install`；`python -m agent --check-config`、`python -m unittest discover -s tests -t .` 均按 README 原样可执行 |
-| D4 | 提交 GitHub 链接且可访问 | ⚠️ | 仓库已初始化 git 并完成本地提交、`.gitignore` 生效、无密钥。**推送与链接需提交者本人完成**（我无 GitHub 凭据） |
+| D4 | 提交 GitHub 链接且可访问 | ✅ | <https://github.com/ckj337728-web/agent>，匿名访问 `HTTP 200`；远端 43 个文件与本地完全一致 |
 | D5 | 对照第 4 节约束逐条自检无违反 | ✅ | 见 [`docs/requirements-check.md`](requirements-check.md)，C-1 ~ C-10 全部通过，无未处理项 |
 
 ---
@@ -67,14 +67,25 @@
 - **6.1 正常路径**：12/12 通过
 - **6.2 异常路径**：8/8 通过
 - **6.3 边界情况**：8/8 通过
-- **6.4 交付验收**：4/5 通过，1 项需提交者操作（D4 推送仓库）
+- **6.4 交付验收**：5/5 通过
 
-**合计 32/33 通过**，唯一未闭环项 D4 属凭据操作，非实现缺陷。
+**合计 33/33 通过，无未闭环项。**
 
-## 需提交者完成的两件事
+## 需提交者完成的一件事
 
-1. **推送仓库并回填 GitHub 链接**（README 与 `requirements-check.md` 中的占位）。
-2. **轮换测试用 API 密钥**：该密钥已出现在对话记录中，建议提交前吊销。
+1. **轮换测试用 API 密钥**：该密钥已出现在对话记录中，建议提交前吊销。
+
+## 推送结果（D4 证据）
+
+| 项 | 结果 |
+| --- | --- |
+| 仓库地址 | <https://github.com/ckj337728-web/agent> |
+| 分支 | `main`，已建立 upstream 跟踪 |
+| 提交数 | 3（初始实现 → 文档脱敏 → task.md 完成标记） |
+| 远端文件数 | 43 |
+| 本地与远端一致性 | `git diff HEAD origin/main` 为空，完全一致 |
+| 匿名可访问性 | 仓库页与 `raw.githubusercontent.com` 上的 README 均返回 `HTTP 200` |
+| 远端密钥扫描 | 逐个文件从 GitHub 拉取扫描，真实密钥 / 供应商信息 / 长密钥样式串**零命中** |
 
 ## 复核命令
 

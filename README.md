@@ -4,6 +4,7 @@
 session 管理与 context 压缩全部自行实现，**未使用任何 Agent 框架**承载主流程
 （题面明确排除 langgraph / openhands / openclaw / PI）。
 
+- 仓库地址：<https://github.com/ckj337728-web/agent>
 - 代码行数：源码约 3600 行，测试约 4200 行
 - 测试：**378 个用例**，离线全绿；另有 10 个真实 API 端到端用例
 - 依赖：**零第三方依赖**，仅使用 Python 标准库
@@ -413,7 +414,7 @@ agent-vibre_coding-test/
 | 必须接入真实 LLM API | `agent/llm.py` 默认使用标准库 `urllib` 真实请求；已用真实端点实测通过 |
 | 至少 3 个工具 + 注册机制 | `calculator` / `search` / `todo`，含 name/description/参数 Schema |
 | 不要提供 API Key | 密钥仅经环境变量注入；已全文扫描确认仓库无真实密钥 |
-| 提交 GitHub 链接 | 见仓库地址；README 覆盖运行方式、系统设计、memory 说明 |
+| 提交 GitHub 链接 | <https://github.com/ckj337728-web/agent>；README 覆盖运行方式、系统设计、memory 说明 |
 | 附 AI Prompt 与问题解决记录 | 见 [`notes/ai-usage.md`](notes/ai-usage.md) |
 
 逐条自检见 [`docs/requirements-check.md`](docs/requirements-check.md)，

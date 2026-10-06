@@ -11,11 +11,10 @@
 > - 真实 API（`LLM_API_KEY` + `LLM_E2E=1`）：同命令 → **378 tests, OK**（含 10 个真实网络用例）
 > - CLI 真实通路：`python -m agent --session window-1 --prompt "…"` 跑通「search + todo」双工具调用，退出码 0
 > - 双窗口隔离（真实 API，跨进程 + 落盘）：窗口1 待办仅「带伞」，窗口2 仅「写周报」，互不影响
-> - 约束自检：`docs/requirements-check.md` 全部通过；验收核验：`docs/acceptance.md` **32/33 通过**
->   （唯一未闭环项 D4 为"推送 GitHub 链接"，属凭据操作，需提交者本人完成）
+> - 约束自检：`docs/requirements-check.md` 全部通过；验收核验：`docs/acceptance.md` **33/33 通过**
 >
-> 仓库状态：已 `git init`（`main` 分支）并完成 2 次提交，工作区 clean；
-> 全仓库密钥扫描零命中（真实密钥、供应商域名/名称、真实模型名均不存在）。
+> 仓库状态：已推送至 <https://github.com/ckj337728-web/agent>（`main` 分支），
+> 远端 43 个文件与本地完全一致；远端视角密钥扫描零命中。
 
 ## 阶段 0：现有资产探查（先行，避免重复造轮子）
 
@@ -254,14 +253,18 @@
 - [×] T050 对照 spec 第 6 节验收清单逐条核验（6.1 正常路径、6.2 异常路径、6.3 边界情况、6.4 交付）
   - 产出：验收核验结果
   - 完成判定：全部条目可勾选并有对应测试或证据支撑（spec 6.4 D1）
-  - 完成情况：`docs/acceptance.md`：N1–N12、E1–E8、B1–B8、D1–D5 共 33 条逐条核验，每条给出对应测试方法名或文件证据。**结果 32/33 通过**；唯一未闭环项 D4（推送 GitHub）属凭据操作而非实现缺陷，已明确标注需提交者完成
+  - 完成情况：`docs/acceptance.md`：N1–N12、E1–E8、B1–B8、D1–D5 共 33 条逐条核验，每条给出对应测试方法名或文件证据。**结果 33/33 通过**
   - 证据可信性：文档中引用的 84 个测试方法/文件名经脚本校验**全部真实存在**，无编造引用
 - [×] T051 提交 GitHub 仓库链接并确认仓库内无 API Key
   - 产出：可访问的仓库链接
   - 完成判定：链接可访问；全仓库检索无真实密钥（spec 4.2 C-7/C-9）
-  - 完成情况：仓库已 `git init`（分支 `main`）并完成 **2 次提交**，工作区 clean；新增 `.gitattributes` 统一行尾；`.gitignore` 生效（`__pycache__`、`.env` 均被忽略，仓库内不存在 `.env`）
-  - **密钥终检（提交前 + 提交后各做一次）**：真实密钥特征串、供应商域名、供应商名称、真实模型名、长密钥样式串——**全部零命中**。过程中发现并修复了自己文档中的 3 处脱敏遗漏（`docs/acceptance.md` 的 grep 示例曾含真实密钥前缀，`task.md`/`docs/requirements-check.md` 含供应商信息），已改为占位符
-  - 待提交者完成：推送远端并回填 README 与 `docs/requirements-check.md` 中的仓库链接占位（我无 GitHub 凭据，无法代为推送）
+  - 完成情况：**已推送至 <https://github.com/ckj337728-web/agent>**（`main` 分支，已建立 upstream 跟踪）。验证：
+    - 远端 43 个文件与本地 `origin/main` **完全一致**（`git diff` 为空），工作区 clean
+    - 匿名访问验证：仓库页与 `raw.githubusercontent.com` 上的 README 均返回 **HTTP 200**
+    - **远端视角密钥扫描**：从 GitHub 逐个拉取全部 43 个文件内容扫描，真实密钥 / 供应商域名与名称 / 真实模型名 / 长密钥样式串**零命中**
+  - 仓库配置：`.gitattributes` 统一行尾；`.gitignore` 生效（`__pycache__`、`.env` 均被忽略，仓库内不存在 `.env`）
+  - 过程中发现并修复了自己文档中的脱敏遗漏：`docs/acceptance.md` 的 grep 示例曾含真实密钥前缀，`task.md`/`docs/requirements-check.md` 含供应商信息，均已改为占位符（提交前后各扫描一次确认）
+  - 唯一待提交者完成事项：**轮换测试用 API 密钥**（该密钥已出现在对话记录中）
 
 ## 实施顺序与依赖
 
