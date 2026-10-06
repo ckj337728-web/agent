@@ -1,7 +1,11 @@
 # 现有资产探查（T001）
 
 探查时间：本次会话开始时
-探查范围：工作区根目录 `C:\Users\86155\Downloads\agent-vibre_coding-test`（含隐藏文件）
+探查范围：工作区根目录（含隐藏文件）
+
+> 注：该目录在探查时的拼写为 `agent-vibre_coding-test`，后续已更正为
+> `agent-vibe_coding-test`（修正 `vibre` → `vibe` 的拼写错误）。此处保留历史事实，
+> 不影响探查结论。
 
 ## 1. 工作区实际内容
 

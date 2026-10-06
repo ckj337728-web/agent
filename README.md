@@ -337,7 +337,7 @@ class CalculatorTool(BaseTool):
 ## 4. 项目结构
 
 ```
-agent-vibre_coding-test/
+agent-vibe_coding-test/
 ├── 1.txt                        # 题面原文（只读，不改动）
 ├── spec.md                      # 需求规格（含约束与验收标准）
 ├── task.md                      # 实施任务清单与完成状态
